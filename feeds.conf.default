@@ -4,3 +4,4 @@ src-git telephony https://github.com/openwrt/telephony.git^98c8a5aa4624312ed758e
 src-git luci https://github.com/MorseMicro/luci.git;2.9-dev
 src-git morse https://github.com/MorseMicro/morse-feed.git;2.9-dev
 src-git prpl https://github.com/MorseMicro/feed-prpl.git;2.9-dev
+src-link openthread /home/sebas/workspace/openwrt/build_deps/ot-br-posix/etc/openwrt

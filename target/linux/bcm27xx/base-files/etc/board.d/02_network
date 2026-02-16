@@ -12,7 +12,10 @@ board=$(board_name)
 case "$board" in
 morse,ekh01 |\
 morse,mm6108-ekh01-spi |\
-morse,mm8108-ekh01-spi |\
+morse,mm8108-ekh01-spi)
+	ucidef_set_interface_lan "eth0" "dhcp"
+	;;
+
 raspberrypi,model-b |\
 raspberrypi,model-b-plus |\
 raspberrypi,model-b-rev2 |\

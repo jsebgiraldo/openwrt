@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Configure OpenThread Border Router for Morse Micro EKH01 boards
+# with nRF52840 RCP dongle connected via USB (/dev/ttyACM0)
+#
+
+# Only apply to Morse boards
+board_name=$(cat /tmp/sysinfo/board_name 2>/dev/null)
+case "$board_name" in
+morse,*)
+	;;
+*)
+	exit 0
+	;;
+esac
+
+# Configure otbr-agent: set infrastructure interface to br-lan
+# The RCP dongle (nRF52840) registers as /dev/ttyACM0 at 460800 baud
+uci -q batch <<-EOT
+	set otbr-agent.service.thread_if_name='wpan0'
+	set otbr-agent.service.infra_if_name='eth0'
+	set otbr-agent.service.uart_device='/dev/ttyACM0'
+	set otbr-agent.service.uart_baudrate='115200'
+	set otbr-agent.service.auto_attach='1'
+	commit otbr-agent
+EOT
+
+# Enable otbr services on boot
+/etc/init.d/otbr-firewall enable 2>/dev/null
+/etc/init.d/otbr-agent enable 2>/dev/null
+
+exit 0
