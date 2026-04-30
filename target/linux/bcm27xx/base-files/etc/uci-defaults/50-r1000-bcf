@@ -1,0 +1,102 @@
+#!/bin/sh
+# On R1000 + Wio-WM6108, the HaLow module is a Quectel FGH100M-H which
+# needs bcf_fgh100mhaamd.bin. Three things have to agree for the BCF
+# to be (a) selected, (b) silent in LuCI, and (c) robust across boots:
+#
+#   1. /lib/firmware/morse/bcf_default.bin -> bcf_fgh100mhaamd.bin
+#      Fallback for any morse driver load that runs without an explicit
+#      `bcf=` module param (initial kmodloader-from-/etc/modules.d on
+#      fresh boot).
+#
+#   2. uci wireless.radio0.bcf = bcf_fgh100mhaamd.bin
+#      What LuCI's morseargon theme reads to decide whether to show
+#      "BCF may not be appropriate!" (header.htm line 237), and what
+#      /lib/netifd/wireless/morse.sh reads to assemble the `bcf=`
+#      parameter into /etc/modules.d/morse.
+#
+#   3. /etc/modules.d/morse with `bcf=bcf_fgh100mhaamd.bin` already in
+#      the params line. Matches what morse.sh would generate on its
+#      next `wifi reload`. This is the critical piece: when morse.sh
+#      next compares its proposed file with the on-disk content and
+#      sees they match (cmp -s), it skips the `rmmod morse` +
+#      `kmodloader` re-insert. Re-inserting morse on a running chip
+#      breaks the MM6108's command/IRQ path on this carrier (SPI
+#      writes still succeed so BCF+firmware reload looks fine, but
+#      morse_cmd_* then times out with -110 and phy has to restart
+#      via health-check; see dmesg history on v27 after the
+#      `wifi reload` baked into that uci-default).
+#
+# We therefore do NOT call `wifi reload` from here. The currently
+# running driver stays up (it loaded with no `bcf=` param but picks
+# up the right BCF via the symlink). On the next boot, kmodloader
+# reads the /etc/modules.d/morse we've written, morse probes with
+# `bcf=bcf_fgh100mhaamd.bin`, and everything is consistent.
+#
+# Self-deletes after successful execution.
+
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "seeed,r1000-wm6108" ] || exit 0
+
+BCF=bcf_fgh100mhaamd.bin
+BCF_PATH=/lib/firmware/morse/$BCF
+LINK=/lib/firmware/morse/bcf_default.bin
+
+[ -f "$BCF_PATH" ] || exit 0
+
+# 1) symlink redirect — harmless if already correct
+current=$(readlink "$LINK" 2>/dev/null)
+case "$current" in
+	*/bcf_fgh100mhaamd.bin|bcf_fgh100mhaamd.bin) ;;
+	*) ln -sf "$BCF" "$LINK" ;;
+esac
+
+# 2) UCI value
+uci set wireless.radio0.bcf="$BCF"
+
+# Default channel sanity: S1G US regulatory excludes 1 MHz channels 28
+# and 36 (and a few high-band ones); shipped images that default to
+# channel=28 will fail in hostapd_s1g with "Frequency XXX not allowed"
+# / "Hardware does not support configured channel". Channel 29 is in
+# the US allow-list (916.5 MHz, 1 MHz wide). Override only if the
+# current value is one of the known-bad defaults.
+case "$(uci -q get wireless.radio0.channel)" in
+	""|28|36)
+		uci set wireless.radio0.channel=29
+		uci set wireless.radio0.htmode=NOHT
+		;;
+esac
+
+uci commit wireless
+
+# 3) Pre-seed /etc/modules.d/morse so future `wifi reload` is a no-op.
+# The params order must match what /lib/netifd/wireless/morse.sh
+# generates, otherwise cmp -s will fail and it will rmmod+kmodloader.
+# Order from morse.sh build_morse_mod_params():
+#   reattach_hw=0  bcf=<file>  enable_sgi_rc=1  macaddr_suffix=<eth0 lower 3 octets>
+ETH0_SUFFIX=$(cat /sys/class/net/eth0/address 2>/dev/null | cut -d: -f4-)
+[ -n "$ETH0_SUFFIX" ] || exit 0
+
+cat > /etc/modules.d/morse <<MORSE
+# Morse module, with subsequent morse_cli commands: bss_color= forced_listen_interval=
+morse reattach_hw=0 bcf=$BCF enable_sgi_rc=1 macaddr_suffix=$ETH0_SUFFIX enable_polling=1
+MORSE
+
+# 4) Patch /lib/netifd/wireless/morse.sh so subsequent `wifi reload` keeps
+#    enable_polling=1 in the generated MOD_PARAMS. Without this, morse.sh
+#    regenerates /etc/modules.d/morse without enable_polling, sees a cmp
+#    mismatch, and triggers an rmmod+kmodloader cycle that re-loads morse
+#    without polling and breaks the chip on this carrier.
+#
+#    Why R1000 needs polling: pin 12 (MOD_INT) on mPCIe Slot 2 is tied to
+#    GND on the carrier (verified against R1000 v1.1 schematic page 12 +
+#    page 15 — Slot 2 was designed for SX1302 LoRa concentrators that
+#    don't need an IRQ line). The morse driver patch
+#    023-spi-polling-mode-for-no-irq-carriers.patch implements
+#    polling_interval_ms-based reads of the chip's INT1_STS register so
+#    no host IRQ line is required.
+if [ -f /lib/netifd/wireless/morse.sh ] && \
+   ! grep -q "enable_polling=1" /lib/netifd/wireless/morse.sh; then
+	sed -i '/^\tMOD_PARAMS=`echo \$MOD_PARAMS | xargs`/i\\tMOD_PARAMS="$MOD_PARAMS enable_polling=1"' \
+		/lib/netifd/wireless/morse.sh
+fi
+
+exit 0

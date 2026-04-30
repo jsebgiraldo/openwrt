@@ -1,0 +1,48 @@
+#!/bin/sh
+# Open SSH/HTTP/HTTPS on the WAN firewall zone so remote debugging and
+# LuCI work out of the box on the R1000 without reconnecting a serial
+# cable after every sysupgrade. This is a DEBUG convenience; for
+# production deployments remove these rules with:
+#   for n in Debug-SSH-WAN Debug-HTTP-WAN Debug-HTTPS-WAN; do
+#     i=$(uci show firewall | awk -F'[][]' "/$n/{print \$2; exit}")
+#     [ -n "$i" ] && uci delete firewall.@rule[$i]
+#   done
+#   uci commit firewall && /etc/init.d/firewall restart
+#
+# Also disables uhttpd's RFC1918 filter so LuCI answers from the WAN
+# IP when the upstream router is on an RFC1918 subnet (typical).
+#
+# Only applies on R1000 boards. uci-defaults scripts self-delete after
+# successful execution, so this runs once on first boot.
+
+[ "$(cat /tmp/sysinfo/board_name 2>/dev/null)" = "seeed,r1000-wm6108" ] || exit 0
+
+add_rule() {
+	local name="$1" port="$2"
+	uci show firewall | grep -q "$name" && return 0
+	uci -q batch <<-EOF
+		add firewall rule
+		set firewall.@rule[-1].name='$name'
+		set firewall.@rule[-1].src='wan'
+		set firewall.@rule[-1].proto='tcp'
+		set firewall.@rule[-1].dest_port='$port'
+		set firewall.@rule[-1].target='ACCEPT'
+	EOF
+}
+
+add_rule Debug-SSH-WAN   22
+add_rule Debug-HTTP-WAN  80
+add_rule Debug-HTTPS-WAN 443
+uci commit firewall
+
+# Allow LuCI to answer requests coming in from RFC1918 source IPs via
+# the WAN-labeled interface (the R1000 lives on a private LAN typically).
+if [ "$(uci -q get uhttpd.main.rfc1918_filter)" = "1" ]; then
+	uci set uhttpd.main.rfc1918_filter='0'
+	uci commit uhttpd
+fi
+
+/etc/init.d/firewall reload 2>/dev/null
+/etc/init.d/uhttpd reload 2>/dev/null
+
+exit 0

@@ -16,6 +16,18 @@ morse,mm8108-ekh01-spi)
 	ucidef_set_interface_lan "eth0" "dhcp"
 	;;
 
+seeed,r1000-wm6108)
+	# eth0 = CM4 onboard GbE (BCM54210 via bcmgenet)               → WAN uplink
+	# eth1 = LAN9512 USB 2.0 hub + 10/100M Ethernet (smsc95xx)     → LAN (PLCs/sensors)
+	#
+	# Rationale: WAN carries internet traffic at >100M, LAN serves field
+	# devices that are typically Modbus/TCP / EtherCAT / similar at <10M
+	# per device — gigabit on the LAN side is wasted and the USB-Eth port
+	# is rate-limited to 100M anyway. Argument order is
+	#   ucidef_set_interfaces_lan_wan <LAN-iface> <WAN-iface>
+	ucidef_set_interfaces_lan_wan "eth1" "eth0"
+	;;
+
 raspberrypi,model-b |\
 raspberrypi,model-b-plus |\
 raspberrypi,model-b-rev2 |\
