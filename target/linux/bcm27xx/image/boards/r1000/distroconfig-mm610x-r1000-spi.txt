@@ -1,0 +1,19 @@
+################################################################################
+# R1000 (v1.0 & v1.1) + Wio-WM6108 bootloader configuration
+################################################################################
+# PCA9535 IO expander lives on BSC1, GPIO2/3 (verified on live hardware with
+# i2cdetect). Enable BSC1 with its default pinmux and SPI1 + USB host.
+#
+# otg_mode=1 is REQUIRED to bring up the BCM2711 native USB 2.0 controller in
+# host mode, so the LAN9512 (idVendor=0424, idProduct=9512) enumerates and the
+# second Ethernet port (eth1) appears. `dtoverlay=dwc2,dr_mode=host` is NOT
+# enough on our kernel because CONFIG_USB_DWC2_HOST is not built.
+
+dtparam=i2c_arm=on
+dtparam=spi=on
+
+otg_mode=1
+
+dtoverlay=audremap,pins_18_19
+
+dtoverlay=mm610x-r1000-spi

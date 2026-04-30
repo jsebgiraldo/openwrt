@@ -65,6 +65,15 @@ define Build/boot-ekh01
 
 endef
 
+define Build/boot-r1000
+	# Seeed reComputer R1000 variant of the ekh01 boot-config step. Uses a
+	# dedicated base distroconfig that omits the uart5 overlay (which would
+	# claim GPIO12/13 and block the PCA9535 software i2c-gpio bus).
+
+	echo -e '\ndtoverlay=sysinfo,board-name="$(SYSINFO_BOARD_NAME)",model="$(SYSINFO_MODEL)"' | cat boards/r1000/distroconfig.txt boards/r1000/distroconfig-$(DISTROCONFIG_EXTRA).txt - | mcopy -o -i $@.boot - ::/distroconfig.txt
+
+endef
+
 define Build/sdcard-img
 	./gen_rpi_sdcard_img.sh $@ $@.boot $(IMAGE_ROOTFS) \
 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $(CONFIG_TARGET_ROOTFS_PARTSIZE)
@@ -247,6 +256,23 @@ define Device/morse_mm8108-ekh01-spi
 endef
 ifeq ($(SUBTARGET),bcm2711)
   TARGET_DEVICES += morse_mm8108-ekh01-spi
+endif
+
+define Device/morse_mm6108-r1000-spi
+  $(Device/morse_ekh01_base)
+  DEVICE_VENDOR := Seeed
+  DEVICE_MODEL := reComputer-R1000
+  DEVICE_VARIANT := WM6108-SPI
+  SYSINFO_MODEL := $$(DEVICE_VENDOR) $$(DEVICE_MODEL) ($$(DEVICE_VARIANT))
+  SYSINFO_BOARD_NAME := seeed,r1000-wm6108
+  SUPPORTED_DEVICES := seeed,r1000-wm6108
+  DEVICE_PACKAGES += kmod-gpio-pca953x kmod-i2c-gpio kmod-usb-net-smsc95xx
+  DISTROCONFIG_EXTRA := mm610x-r1000-spi
+  IMAGE/sysupgrade.img.gz := boot-common | boot-2711 | boot-r1000 | sdcard-img | gzip | append-metadata
+  IMAGE/factory.img.gz := boot-common | boot-2711 | boot-r1000 | sdcard-img | gzip
+endef
+ifeq ($(SUBTARGET),bcm2711)
+  TARGET_DEVICES += morse_mm6108-r1000-spi
 endif
 
 define Device/morse_mm6108-ekh01-spi
