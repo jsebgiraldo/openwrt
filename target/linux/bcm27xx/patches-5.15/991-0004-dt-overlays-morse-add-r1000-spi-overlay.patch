@@ -1,0 +1,299 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jsebgiraldo <jsgiraldod@hotmail.com>
+Date: Tue, 21 Apr 2026 23:40:00 +0000
+Subject: [PATCH] bcm27xx: add R1000 + WM6108 SPI overlay for MM6108
+
+Device tree overlay for the Seeed reComputer Industrial R1000 carrier
+with a Seeed Wio-WM6108 (Quectel FGH100M-H / MorseMicro MM6108) in
+Mini-PCIe Slot 2.
+
+Based on Seeed's own upstream reComputer-R100x overlay
+(Seeed-Studio/seeed-linux-dtoverlays), this single overlay:
+  - Attaches the R1000 PCA9535 IO expander at 0x21 on BSC5 (or BSC3
+    when loaded with ",uart2" via the i2c_frag override) and declares
+    ALL its output pins with line-names matching the carrier schematic,
+    including USB2_RST_EN driven output-high to release the LAN9512
+    USB-Ethernet hub from reset (otherwise eth1 never appears).
+  - Registers regulator-fixed nodes for VDD_OUT / VDD_5V_OUT / RS485_PWR
+    so the expander drives them on automatically at boot.
+  - Configures SPI1 with CE0=TPM SLB9670 (GPIO18) and CE1=MM6108
+    (GPIO17) and attaches the Morse Micro HaLow driver at CE1 with
+    reset on PCA9535 P02 and IRQ on PCA9535 P01.
+
+Runtime tunables via __overrides__:
+  dtoverlay=mm610x-r1000-spi              (v1.1 default)
+  dtoverlay=mm610x-r1000-spi,uart2        (R1000 v1.0, PCA9535 on &i2c3)
+  dtoverlay=mm610x-r1000-spi,spi_max_freq=10000000
+
+--- /dev/null
++++ b/arch/arm/boot/dts/overlays/mm610x-r1000-spi-overlay.dts
+@@ -0,0 +1,269 @@
++/*
++ * Seeed reComputer Industrial R1000 + Wio-WM6108 HaLow.
++ * Derived from the upstream Seeed reComputer-R100x overlay
++ * (Seeed-Studio/seeed-linux-dtoverlays, MIT), with the unused
++ * spidev CE1 replaced by the Morse Micro MM6108 HaLow radio.
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include "dt-bindings/gpio/gpio.h"
++
++/ {
++	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709", "brcm,bcm2711";
++
++	fragment@0 {
++		target-path = "/";
++		__overlay__ {
++			hardware = "reComputer-R100x V1.0&V1.1 + WM6108";
++		};
++	};
++
++	/* PCA9535 IO expander on BSC1 / GPIO2/3. Enable BSC1 via
++	 * `dtparam=i2c_arm=on` in distroconfig. A live bus scan on the
++	 * R1000 v1.1 confirmed the expander ACKs at 0x21 on GPIO2/3.
++	 */
++	i2c_frag: fragment@1 {
++		target = <&i2c1>;
++		__overlay__ {
++			status = "okay";
++			clock-frequency = <400000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			pcf857x: pcf@21 {
++				compatible = "nxp,pca9535";
++				reg = <0x21>;
++				status = "okay";
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				interrupt-parent = <&gpio>;
++				interrupts = <24 8>;	/* GPIO24, IRQ_TYPE_LEVEL_LOW */
++
++				/* Line-name overrides of the upstream Seeed overlay:
++				 *  - offset 2  (P02): "LoRaWAN_SX1302_RST" -> "MM_RESET"
++				 *    Physically it's the same mPCIe pin 22 reset line;
++				 *    on Slot 2 with a WM6108 this drives the MM6108
++				 *    reset. The morse chipreset.sh tool locates it via
++                 *    `gpiofind MM_RESET`.
++				 *  - offset 9  (P11): "VDD_OUT_CTL" -> "Buzzer_EN"
++				 *    Empirical test on this R1000 v1.1 unit: P11 HIGH
++				 *    makes the buzzer sound and P11 LOW silences it.
++				 *    Seeed's upstream overlay mislabels P11 as a power
++				 *    rail control, but on this revision the buzzer is
++				 *    actually wired here, NOT on P15.
++				 *  - offset 13 (P15): "Buzzer_EN" -> "gpio_pin13"
++				 *    Unused / not the buzzer on this revision.
++				 */
++				gpio-line-names =
++					"LoRaWAN_SX1262_CS",  "LoRaWAN_SX1262_RST",
++					"MM_RESET",           "LTE_RESET",
++					"TPM_RST",            "USR_LED_R",
++					"USR_LED_G",          "USR_LED_B",
++					"EEPROM_WP",          "Buzzer_EN",
++					"VDD_5V_OUT_CTL",     "USB2_RST_EN",
++					"RS485_POWER_EN",     "gpio_pin13",
++					"gpio_pin14",         "gpio_pin15";
++
++				/* gpio-hog entries force these lines to a known state
++				 * at pca953x probe time. Without `gpio-hog;` the kernel
++				 * ignores these subnodes entirely (which is why the
++				 * upstream Seeed overlay leaves USB2_RST_EN asserted
++				 * and the LAN9512 in reset).
++				 *
++				 * MM_RESET (P02) is intentionally NOT hogged here.
++				 * A gpio-hog would reserve the line and block the
++				 * morse driver from requesting it at probe time, so
++				 * morse_spi_probe would never be able to pulse reset.
++				 * Instead, the morse driver is patched to request P02
++				 * via reset-gpios and pulse it low->high itself at the
++				 * start of probe (see morse_driver patch
++				 * 021-reset-chip-early-in-probe.patch). PCA9535 powers
++				 * up with all pins as inputs; the MM6108 integrates a
++				 * reset controller that treats a floating line as
++				 * "not reset", so the ~ms window between pca953x probe
++				 * and morse probe does not latch the chip.
++				 */
++				lte-rst-hog {
++					gpio-hog;
++					gpios = <3 GPIO_ACTIVE_HIGH>;
++					output-high;
++					line-name = "LTE_RESET";
++				};
++				tpm-rst-hog {
++					gpio-hog;
++					gpios = <4 GPIO_ACTIVE_HIGH>;
++					output-high;
++					line-name = "TPM_RST";
++				};
++				eeprom-wp-hog {
++					gpio-hog;
++					gpios = <8 GPIO_ACTIVE_HIGH>;
++					output-high;
++					line-name = "EEPROM_WP";
++				};
++				usb2-rst-hog {
++					gpio-hog;
++					gpios = <11 GPIO_ACTIVE_HIGH>;
++					output-high;
++					line-name = "USB2_RST_EN";
++				};
++				rs485-pwr-hog {
++					gpio-hog;
++					gpios = <12 GPIO_ACTIVE_HIGH>;
++					output-high;
++					line-name = "RS485_POWER_EN";
++				};
++				buzzer-off-hog {
++					/* Live bench test on this R1000 v1.1 unit: the
++					 * buzzer is controlled by P11 (offset 9), NOT P15
++					 * as Seeed's docs claim. P11 HIGH sounds; P11 LOW
++					 * silences. Hog as output-low to keep it silent.
++					 */
++					gpio-hog;
++					gpios = <9 GPIO_ACTIVE_HIGH>;
++					output-low;
++					line-name = "Buzzer_EN";
++				};
++			};
++		};
++	};
++
++	/* Enable i2c0 mux pins on GPIO44/45 (ATECC608 secure element path). */
++	fragment@2 {
++		target = <&i2c0_pins>;
++		__overlay__ {
++			brcm,pins = <44 45>;
++			brcm,function = <5>;
++		};
++	};
++
++	/* Pinctrl groups for SPI0 Slot-2 routing (per the R1000 pin
++	 * assignment image): SCLK=GPIO11, MISO=GPIO9, MOSI=GPIO10, CE1=GPIO7.
++	 * The mPCIe Slot 2 exposes SPI0 (NOT SPI1 as the v1.1 xlsx
++	 * mislabels), with only CE1 routed out; CE0 (GPIO8) is unused here.
++	 */
++	fragment@3 {
++		target = <&gpio>;
++		__overlay__ {
++			mm_spi0_pins: mm_spi0_pins {
++				brcm,pins = <9 10 11>;
++				brcm,function = <4>;	/* ALT0 = SPI0 */
++				brcm,pull = <2 2 2>;
++			};
++			mm_spi0_cs_pins: mm_spi0_cs_pins {
++				brcm,pins = <7>;
++				brcm,function = <1>;	/* GPIO_OUT */
++				brcm,pull = <2>;	/* idle high */
++			};
++		};
++	};
++
++	/* SPI0 root: enable + attach MM6108 on CE1 (GPIO7). CE0 is left
++	 * unconnected at the slot so we do not declare a slave there.
++	 */
++	spi_frag: fragment@4 {
++		target = <&spi0>;
++		__overlay__ {
++			pinctrl-names = "default";
++			pinctrl-0 = <&mm_spi0_pins &mm_spi0_cs_pins>;
++			cs-gpios = <0>, <&gpio 7 1>;	/* no CE0 at slot, CE1 = GPIO7 */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "okay";
++
++			mm6108: mm6108@1 {
++				compatible = "morse,mm610x-spi";
++				reg = <1>;	/* CE1 */
++				#address-cells = <1>;
++				#size-cells = <0>;
++				/* P02 (line-name MM_RESET) — morse driver drives LOW
++				 * for 20 ms then releases to pulse the MM6108's reset
++				 * line. The driver uses the raw gpio number with
++				 * gpio_request() (not gpiod), so the ACTIVE_LOW flag
++				 * is informational only.
++				 */
++				reset-gpios    = <&pcf857x 2 GPIO_ACTIVE_LOW>;
++				spi-irq-gpios  = <&pcf857x 1 GPIO_ACTIVE_HIGH>;
++				spi-max-frequency = <20000000>;
++				status = "okay";
++			};
++		};
++	};
++
++	/* Disable both spidev nodes on SPI0 so the default `dtparam=spi=on`
++	 * does not claim CE0/CE1 ahead of the MM6108.
++	 */
++	fragment@5 {
++		target = <&spidev0>;
++		__overlay__ { status = "disabled"; };
++	};
++	fragment@8 {
++		target = <&spidev1>;
++		__overlay__ { status = "disabled"; };
++	};
++
++	/* User LEDs exposed as gpio-leds (via expander). */
++	fragment@6 {
++		target = <&leds>;
++		__overlay__ {
++			compatible = "gpio-leds";
++			led_red: led_red {
++				label = "r1000:red:usr";
++				linux,default-trigger = "default-off";
++				gpios = <&pcf857x 5 GPIO_ACTIVE_LOW>;
++				default-state = "off";
++			};
++			led_green: led_green {
++				label = "r1000:green:usr";
++				linux,default-trigger = "default-off";
++				gpios = <&pcf857x 6 GPIO_ACTIVE_LOW>;
++				default-state = "off";
++			};
++			led_blue: led_blue {
++				label = "r1000:blue:usr";
++				linux,default-trigger = "default-off";
++				gpios = <&pcf857x 7 GPIO_ACTIVE_LOW>;
++				default-state = "off";
++			};
++		};
++	};
++
++	/* Fixed regulators driven by expander, always-on so the carrier
++	 * power rails for the CM4 peripheral side are up at boot.
++	 */
++	fragment@7 {
++		target-path = "/";
++		__overlay__ {
++			/* NOTE: vdd_out regulator on P11 intentionally removed —
++			 * on this R1000 revision P11 is physically the buzzer line
++			 * (see gpio-line-names rename above), so enabling it as an
++			 * always-on regulator made the buzzer sound at every boot.
++			 */
++			vdd_5v_out: vdd_5v_out {
++				compatible = "regulator-fixed";
++				regulator-name = "vdd-5v-out";
++				gpios = <&pcf857x 10 GPIO_ACTIVE_HIGH>;
++				enable-active-high;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++			rs485_pwr: rs485_pwr {
++				compatible = "regulator-fixed";
++				regulator-name = "rs485-pwr";
++				gpio = <&pcf857x 12 GPIO_ACTIVE_HIGH>;
++				enable-active-high;
++				regulator-boot-on;
++				regulator-always-on;
++			};
++		};
++	};
++
++	__overrides__ {
++		exp_irq_gpio = <&pcf857x>, "interrupts:0";
++		spi_max_freq = <&mm6108>, "spi-max-frequency:0";
++	};
++};
