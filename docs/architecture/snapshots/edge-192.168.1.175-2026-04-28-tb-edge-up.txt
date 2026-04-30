@@ -1,0 +1,160 @@
+## R1000 FULL STACK snapshot — 2026-04-28 post-migration COMPLETA
+Tue Apr 28 13:03:42 -05 2026
+
+## identity
+r1000-wm6108-a3dd
+seeed,r1000-wm6108
+5.15.167
+
+## resources
+ 13:03:42 up 29 min,  load average: 0.92, 1.74, 1.72
+              total        used        free      shared  buff/cache   available
+Mem:        1848296     1460296       31708       62068      356292      262240
+overlayfs:/overlay        7.1G      6.2G    942.5M  87% /
+overlayfs:/overlay        7.1G      6.2G    942.5M  87% /
+
+## thread state
+leader
+Done
+UNAL-R1000
+Done
+0x41ae
+Done
+21
+Done
+552377921
+Done
+d800
+Done
+running
+Done
+Local: fd67:9823:5fe5:1::/64
+Favored: fd67:9823:5fe5:1::/64 prf:low
+Done
+12
+Done
+13
+Done
+
+## srp client/server
+Enabled
+Done
+name:"thingsboard-edge", state:Registered, addrs:auto
+Done
+instance:"ThingsBoard-Edge", name:"_coap._udp", state:Registered, port:5683, priority:0, weight:0
+Done
+ThingsBoard-Edge._coap._udp.default.service.arpa.
+    deleted: false
+    subtypes: (null)
+    port: 5683
+    priority: 0
+    weight: 0
+    ttl: 7200
+    lease: 7200
+    key-lease: 680400
+    TXT: []
+    host: thingsboard-edge.default.service.arpa.
+    addresses: [fd67:9823:5fe5:1:1061:43d9:fa54:b221]
+Done
+
+## mDNS LAN announce
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi.dtd">
+<service-group>
+  <name replace-wildcards="yes">%h-thingsboard-edge</name>
+  <service>
+    <type>_coap._udp</type>
+    <port>5683</port>
+    <txt-record>name=ThingsBoard-Edge</txt-record>
+    <txt-record>type=edge</txt-record>
+    <txt-record>version=4.3.1.1EDGE</txt-record>
+  </service>
+</service-group>
++ docker0 IPv4 ThingsBoard-Edge                              _coap._udp           local
++ docker0 IPv4 r1000-wm6108-a3dd-thingsboard-edge            _coap._udp           local
++ br-lan IPv6 ThingsBoard-Edge                              _coap._udp           local
++ br-lan IPv6 r1000-wm6108-a3dd-thingsboard-edge            _coap._udp           local
++ br-lan IPv4 ThingsBoard-Edge                              _coap._udp           local
++ br-lan IPv4 r1000-wm6108-a3dd-thingsboard-edge            _coap._udp           local
++     lo IPv4 ThingsBoard-Edge                              _coap._udp           local
++     lo IPv4 r1000-wm6108-a3dd-thingsboard-edge            _coap._udp           local
+
+## docker stack
+NAMES              IMAGE                             STATUS
+tb-edge-v2         thingsboard/tb-edge:4.3.1.1EDGE   Up 11 minutes
+tb-edge-postgres   postgres:15-alpine                Up 12 minutes
+NAME               CPU %     MEM USAGE / LIMIT
+tb-edge-v2         5.66%     0B / 0B
+tb-edge-postgres   0.12%     0B / 0B
+
+## tb-edge http UI alcanzable
+HTTP 200
+
+## tb-edge logs - cloud connection
+2026-04-28 17:58:58,621 [grpc-default-executor-0] INFO  o.t.s.s.e.r.p.BaseEdgeProcessor - Adding CALCULATED_FIELD_REQUEST 0b23bb60-3399-11f1-a6bc-0324a9cfbb29 DEVICE_PROFILE
+2026-04-28 17:58:58,813 [grpc-default-executor-0] INFO  o.t.s.s.e.r.p.BaseEdgeProcessor - Adding CALCULATED_FIELD_REQUEST 22977ee0-3375-11f1-819e-37b31fc214d7 DEVICE_PROFILE
+2026-04-28 17:58:59,141 [grpc-default-executor-0] INFO  o.t.s.s.e.r.p.BaseEdgeProcessor - Adding CALCULATED_FIELD_REQUEST 4ca4d3a0-3847-11f1-968b-ed111852adb3 DEVICE_PROFILE
+2026-04-28 17:59:05,416 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [11] uplink msg(s) took 163 ms.
+2026-04-28 17:59:05,571 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [1] uplink msg(s) took 13 ms.
+2026-04-28 17:59:58,592 [TB-Scheduling-2] INFO  o.t.s.s.queue.TbCoreConsumerStats - Core Stats: totalMsgs = [21] sessionEvents = [0] getAttr = [0] subToAttr = [0] subToRpc = [0] toDevRpc = [0] subInfo = [0] claimDevice = [0] deviceState = [0] subMsgs = [0] cloudNfs = [0] deviceConnect = [0] deviceActivity = [0] deviceDisconnect = [0] deviceInactivity = [0] deviceInactivityTimeoutUpdate = [0] coreNfOther = [0] coreNfCompLfcl = [21] coreNfDevRpcRsp = [0] coreNfNfRlProc = [0] coreNfQueueUpd = [0] coreNfQueueDel = [0] coreNfSubSvc = [0] coreNfSubMgr = [0] coreNfVCRsp = [0] 
+2026-04-28 17:59:58,877 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [1] uplink msg(s) took 72 ms.
+2026-04-28 18:00:59,144 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [1] uplink msg(s) took 17 ms.
+2026-04-28 18:01:59,386 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [1] uplink msg(s) took 11 ms.
+2026-04-28 18:02:59,613 [cloud-manager-uplink-75-thread-1] INFO  o.t.s.s.c.e.s.GrpcCloudEventUplinkSender - Sending of [1] uplink msg(s) took 13 ms.
+
+## persistencia
+/etc/config/otbr-agent
+/etc/otbr/active-dataset.tlvs
+/etc/otbr/active-dataset.txt
+/etc/otbr/reapply-dataset.sh
+/etc/rc.local
+/etc/avahi/services/thingsboard-edge.service
+
+## rc.local
+#!/bin/sh -e
+
+# OTBR-RCP-RECOVERY: USB unbind/rebind del dongle si después de boot el spinel falla
+( sleep 5
+  if ! ot-ctl state >/dev/null 2>&1; then
+    echo "$(date): rc.local: spinel not responding, USB-resetting cp210x dongle" >> /tmp/otbr-rcp-recovery.log
+    /etc/init.d/otbr-agent stop
+    sleep 2
+    killall -9 otbr-agent 2>/dev/null
+    sleep 2
+    CP_PATH=$(for d in /sys/bus/usb/devices/*/idVendor; do
+      [ -e "$d" ] && [ "$(cat $d)" = '10c4' ] && basename "${d%/idVendor}"
+    done)
+    [ -n "$CP_PATH" ] && {
+        echo "$CP_PATH" > /sys/bus/usb/drivers/usb/unbind 2>/dev/null
+        sleep 2
+        echo "$CP_PATH" > /sys/bus/usb/drivers/usb/bind 2>/dev/null
+        sleep 5
+    }
+    /etc/init.d/otbr-agent start
+  fi
+) >> /tmp/otbr-rcp-recovery.log 2>&1 &
+
+# OTBR-REAPPLY: reapply Thread dataset si OT en disabled/detached
+( sleep 18 && /etc/otbr/reapply-dataset.sh >> /tmp/otbr-reapply.log 2>&1 ) &
+
+# OTBR-THRESHOLDS: backbone selectivo de hasta 12 routers
+( sleep 25 &&   ot-ctl routerupgradethreshold 12 &&   ot-ctl routerdowngradethreshold 13 ) >> /tmp/otbr-router-thresholds.log 2>&1 &
+
+# SRP-THINGSBOARD: register TB Edge en Thread SRP server
+( sleep 30 &&   OMR=$(ot-ctl ipaddr | grep -E '^fd67:9823' | head -1) &&   [ -n "$OMR" ] &&   ot-ctl srp client host name thingsboard-edge &&   ot-ctl srp client host address $OMR &&   ot-ctl srp client service add ThingsBoard-Edge _coap._udp 5683 0 0 &&   ot-ctl srp client autostart enable ) >> /tmp/srp-thingsboard.log 2>&1 &
+
+exit 0
+...
+
+## active-dataset.txt
+Active Timestamp: 1
+Channel: 21
+Wake-up Channel: 26
+Channel Mask: 0x07fff800
+Ext PAN ID: b68333bc101c7c53
+Mesh Local Prefix: fdf1:a391:6243:2a67::/64
+Network Key: b31c1588a1b2f68c622401711f73afd0
+Network Name: UNAL-R1000
+PAN ID: 0x41ae
+PSKc: 6c9b91f71e5936022a86af24b3c92cd3
+Security Policy: 672 onrc 0

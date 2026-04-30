@@ -1,0 +1,781 @@
+# Raw snapshot of 192.168.1.111 (ekh01-de87) — 2026-04-27T15:39:16-05:00
+# Source: docs/architecture/edge-thingsboard.md is the synthesized version of this.
+
+═══════════════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════
+SECTION: identity
+═══════════════════════════════════════════════════════════════════════
+hostname: ekh01-de87
+board: morse,ekh01
+model: MorseMicro MMx108-EKH01 (SDIO)
+release: 'OpenWrt 23.05.5 Morse-2.9-dev'
+kernel: 5.15.167
+arch: aarch64
+uptime:  09:29:54 up 1 day, 22:00,  load average: 0.21, 0.17, 0.10
+
+═══ SECTION: network/ip ═══
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+eth0             UP             88:a2:9e:1c:de:87 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+morse0           DOWN           12:00:00:00:00:00 <BROADCAST,MULTICAST> 
+br-lan           UP             88:a2:9e:1c:de:87 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+wlan0            UP             0c:bf:74:1c:de:87 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+docker0          UP             02:42:b3:30:8d:44 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+veth8173d5a@if9  UP             9e:61:83:0a:d8:e3 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+wpan0            UNKNOWN        <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> 
+---ipv4---
+lo               UNKNOWN        127.0.0.1/8 
+br-lan           UP             192.168.1.111/24 
+docker0          UP             172.17.0.1/16 
+---ipv6---
+lo               UNKNOWN        ::1/128 
+br-lan           UP             fd91:2451:2450:4aa9:8aa2:9eff:fe1c:de87/64 2800:484:8f7e:32f0:8aa2:9eff:fe1c:de87/64 fd89:e85:a6f0:0:8aa2:9eff:fe1c:de87/64 2800:484:8f7e:32f0::87a/128 fd89:e85:a6f0::87a/128 fe80::8aa2:9eff:fe1c:de87/64 
+wlan0            UP             fe80::ebf:74ff:fe1c:de87/64 
+docker0          UP             fe80::42:b3ff:fe30:8d44/64 
+veth8173d5a@if9  UP             fe80::9c61:83ff:fe0a:d8e3/64 
+wpan0            UNKNOWN        fdf5:bffd:bd6:ef74:0:ff:fe00:fc11/64 fdee:f43f:d8b2:1:1df:6a9:934e:99a5/64 fdf5:bffd:bd6:ef74:0:ff:fe00:fc38/64 fdf5:bffd:bd6:ef74:0:ff:fe00:fc10/64 fdf5:bffd:bd6:ef74:0:ff:fe00:fc00/64 fdf5:bffd:bd6:ef74:0:ff:fe00:dc00/64 fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91/64 fe80::9039:72e3:b85a:e1d4/64 
+---routes v4---
+default via 192.168.1.1 dev br-lan proto static src 192.168.1.111 
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
+192.168.1.0/24 dev br-lan proto kernel scope link src 192.168.1.111 
+---routes v6---
+default from 2800:484:8f7e:32f0::87a via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from 2800:484:8f7e:32f0::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from 2800:484:8f7e:32f4::/62 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from fd89:e85:a6f0::87a via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from fd89:e85:a6f0::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from fd89:e85:a6f0:4::/62 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+default from fd91:2451:2450:4aa9::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from 2800:484:8f7e:32f0::87a via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from 2800:484:8f7e:32f0::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from 2800:484:8f7e:32f4::/62 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from fd89:e85:a6f0::87a via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from fd89:e85:a6f0::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from fd89:e85:a6f0:4::/62 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/60 from fd91:2451:2450:4aa9::/64 via fe80::6238:e0ff:fe12:9d41 dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f0::/64 dev br-lan proto static metric 256 pref medium
+unreachable 2800:484:8f7e:32f0::/64 dev lo proto static metric 2147483647 pref medium
+unreachable 2800:484:8f7e:32f4::/62 dev lo proto static metric 2147483647 pref medium
+2800:484:8f7e:32f8::/64 from 2800:484:8f7e:32f0::87a via fe80::4b2:7d6b:920:2acd dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f8::/64 from 2800:484:8f7e:32f0::/64 via fe80::4b2:7d6b:920:2acd dev br-lan proto static metric 512 pref medium
+2800:484:8f7e:32f8::/64 from 2800:484:8f7e:32f4::/62 via fe80::4b2:7d6b:920:2acd dev br-lan proto static metric 512 pref medium
+---bridge---
+bridge name	bridge id		STP enabled	interfaces
+br-lan		7fff.88a29e1cde87	no		eth0
+							wlan0
+docker0		8000.0242b3308d44	no		veth8173d5a
+
+═══ SECTION: uci-network ═══
+package network
+
+config interface 'loopback'
+	option device 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
+
+config globals 'globals'
+	option ula_prefix 'fd0f:0e50:0476::/48'
+
+config device
+	option name 'br-lan'
+	option type 'bridge'
+	list ports 'eth0'
+
+config interface 'lan'
+	option device 'br-lan'
+	option proto 'dhcp'
+
+config interface 'lan6'
+	option device 'br-lan'
+	option proto 'dhcpv6'
+
+config interface 'wan'
+	option proto 'dhcp'
+
+config interface 'docker'
+	option device 'docker0'
+	option proto 'none'
+	option auto '0'
+
+config device
+	option type 'bridge'
+	option name 'docker0'
+
+
+═══ SECTION: uci-wireless ═══
+package wireless
+
+config wifi-device 'radio0'
+	option type 'morse'
+	option path 'platform/soc/fe300000.mmc/mmc_host/mmc1/mmc1:0001/mmc1:0001:2'
+	option band 's1g'
+	option hwmode '11ah'
+	option reconf '0'
+	option bcf 'bcf_mf15457.bin'
+	option country 'US'
+	option channel 'auto'
+	option s1g_chanbw '8'
+
+config wifi-iface 'default_radio0'
+	option mode 'ap'
+	option wds '1'
+	option device 'radio0'
+	option network 'lan'
+	option ssid 'ekh01-de87'
+	option encryption 'sae'
+	option key 'jYNJ5MQ8'
+
+
+═══ SECTION: uci-firewall ═══
+package firewall
+
+config defaults
+	option syn_flood '1'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+
+config zone
+	option name 'lan'
+	list network 'lan'
+	option input 'ACCEPT'
+	option output 'ACCEPT'
+	option forward 'ACCEPT'
+
+config zone
+	option name 'wan'
+	list network 'wan'
+	list network 'wan6'
+	option input 'REJECT'
+	option output 'ACCEPT'
+	option forward 'REJECT'
+	option masq '1'
+	option mtu_fix '1'
+
+config forwarding
+	option src 'lan'
+	option dest 'wan'
+
+config rule
+	option name 'Allow-DHCP-Renew'
+	option src 'wan'
+	option proto 'udp'
+	option dest_port '68'
+	option target 'ACCEPT'
+	option family 'ipv4'
+
+config rule
+	option name 'Allow-Ping'
+	option src 'wan'
+	option proto 'icmp'
+	option icmp_type 'echo-request'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IGMP'
+	option src 'wan'
+	option proto 'igmp'
+	option family 'ipv4'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-DHCPv6'
+	option src 'wan'
+	option proto 'udp'
+	option dest_port '546'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-MLD'
+	option src 'wan'
+	option proto 'icmp'
+	option src_ip 'fe80::/10'
+	list icmp_type '130/0'
+	list icmp_type '131/0'
+	list icmp_type '132/0'
+	list icmp_type '143/0'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Input'
+	option src 'wan'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	list icmp_type 'router-solicitation'
+	list icmp_type 'neighbour-solicitation'
+	list icmp_type 'router-advertisement'
+	list icmp_type 'neighbour-advertisement'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ICMPv6-Forward'
+	option src 'wan'
+	option dest '*'
+	option proto 'icmp'
+	list icmp_type 'echo-request'
+	list icmp_type 'echo-reply'
+	list icmp_type 'destination-unreachable'
+	list icmp_type 'packet-too-big'
+	list icmp_type 'time-exceeded'
+	list icmp_type 'bad-header'
+	list icmp_type 'unknown-header-type'
+	option limit '1000/sec'
+	option family 'ipv6'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-IPSec-ESP'
+	option src 'wan'
+	option dest 'lan'
+	option proto 'esp'
+	option target 'ACCEPT'
+
+config rule
+	option name 'Allow-ISAKMP'
+	option src 'wan'
+	option dest 'lan'
+	option dest_port '500'
+	option proto 'udp'
+
+═══ SECTION: uci-dhcp ═══
+package dhcp
+
+config dnsmasq
+	option domainneeded '1'
+	option boguspriv '1'
+	option filterwin2k '0'
+	option localise_queries '1'
+	option rebind_protection '1'
+	option rebind_localhost '1'
+	option local '/lan/'
+	option domain 'lan'
+	option expandhosts '1'
+	option nonegcache '0'
+	option cachesize '1000'
+	option authoritative '1'
+	option readethers '1'
+	option leasefile '/tmp/dhcp.leases'
+	option resolvfile '/tmp/resolv.conf.d/resolv.conf.auto'
+	option nonwildcard '1'
+	option localservice '1'
+	option ednspacket_max '1232'
+	option filter_aaaa '0'
+	option filter_a '0'
+
+config dhcp 'lan'
+	option interface 'lan'
+	option start '100'
+	option limit '150'
+	option leasetime '12h'
+
+config dhcp 'wan'
+	option interface 'wan'
+	option ignore '1'
+
+
+═══ SECTION: uci-system ═══
+package system
+
+config system
+	option hostname 'ekh01-de87'
+	option timezone '<-05>5'
+	option ttylogin '0'
+	option log_size '64'
+	option urandom_seed '0'
+	option compat_version '1.0'
+	option default_wifi_key 'jYNJ5MQ8'
+	option zonename 'America/Bogota'
+
+config timeserver 'ntp'
+	option enabled '1'
+	option enable_server '0'
+	list server '0.openwrt.pool.ntp.org'
+	list server '1.openwrt.pool.ntp.org'
+	list server '2.openwrt.pool.ntp.org'
+	list server '3.openwrt.pool.ntp.org'
+
+config led 'led_green'
+	option name 'green-wifi-activity'
+	option sysfs 'led0'
+	option trigger 'netdev'
+	option mode 'link tx rx'
+	option dev 'wlan0'
+
+
+═══ SECTION: uci-otbr ═══
+---/etc/config/otbr-agent---
+
+config otbr-agent 'service'
+	option thread_if_name 'wpan0'
+	option infra_if_name 'br-lan'
+	option uart_device '/dev/ttyACM0'
+	option uart_baudrate '115200'
+	option auto_attach '1'
+
+---/etc/config/otbr-network---
+#
+# Thread network parameters mirror (UCI).
+#
+# This file mirrors the active Thread network dataset so it can be inspected
+# and recovered across reboots or firmware upgrades. OpenThread persists its
+# own dataset under OT_POSIX_SETTINGS_PATH (default /etc/openthread), and
+# remains the runtime source of truth. On boot, if that dataset is missing
+# but 'enabled' is 1 and the required params are set, the init script
+# reconstructs the dataset from these values via ot-ctl.
+#
+# 'enabled' follows the same semantics as any OpenWrt wireless network:
+#   1 = auto-start Thread on boot (if dataset or UCI params available)
+#   0 = user explicitly stopped Thread; do not auto-start
+#
+# The LuCI Thread pages keep these values in sync after dataset changes.
+# Manual edits here only take effect if the OpenThread dataset is cleared
+# (ot-ctl factoryreset) first.
+
+config thread 'network'
+	option enabled '0'
+	option networkname ''
+	option channel ''
+	option panid ''
+	option extpanid ''
+	option networkkey ''
+	option pskc ''
+	option mode 'rdn'
+	option macfilter 'disabled'
+═══ SECTION: ot-thread-state ═══
+leader
+Done
+---
+UNAL-Thread
+Done
+25
+Done
+0x23ed
+Done
+1a2578dd6ee3573b
+Done
+1200248003
+Done
+dc00
+Done
+rdn
+Done
+fdf5:bffd:bd6:ef74:0:ff:fe00:fc11
+fdee:f43f:d8b2:1:1df:6a9:934e:99a5
+fdf5:bffd:bd6:ef74:0:ff:fe00:fc38
+fdf5:bffd:bd6:ef74:0:ff:fe00:fc10
+fdf5:bffd:bd6:ef74:0:ff:fe00:fc00
+fdf5:bffd:bd6:ef74:0:ff:fe00:dc00
+fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91
+fe80:0:0:0:9039:72e3:b85a:e1d4
+Done
+---br state---
+running
+Done
+Local: fdee:f43f:d8b2:1::/64
+Favored: fdee:f43f:d8b2:1::/64 prf:low
+Done
+Local: fd1a:2578:dd6e:573b::/64
+Favored: 2800:484:8f7e:32f0::/64
+Done
+med
+Done
+fdee:f43f:d8b2:1::/64 paros low dc00
+Done
+---dataset---
+Active Timestamp: 1
+Channel: 25
+Wake-up Channel: 15
+Channel Mask: 0x07fff800
+Ext PAN ID: 1a2578dd6ee3573b
+Mesh Local Prefix: fdf5:bffd:bd6:ef74::/64
+Network Key: 5edebead64405b3e17193646c2942285
+Network Name: UNAL-Thread
+PAN ID: 0x23ed
+PSKc: bb7e7aee56236ea96ac8dc65bba18351
+Security Policy: 672 onrc 0
+Done
+---dataset hex---
+0e0800000000000100004a0300000f35060004001fffe002081a2578dd6ee3573b0708fdf5bffd0bd6ef7405105edebead64405b3e17193646c2942285010223ed0410bb7e7aee56236ea96ac8dc65bba183510c0402a0f7f8030b554e414c2d5468726561640003000019
+Done
+
+═══ SECTION: srp-state ═══
+Enabled
+Done
+Enabled
+Done
+[fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91]:53536
+Done
+name:"thingsboard-edge", state:Registered, addrs:[fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91]
+Done
+instance:"ThingsBoard-Edge", name:"_mqtt._tcp", state:Registered, port:1883, priority:0, weight:0
+Done
+---server side---
+running
+Done
+default.service.arpa.
+Done
+ThingsBoard-Edge._mqtt._tcp.default.service.arpa.
+    deleted: false
+    subtypes: (null)
+    port: 1883
+    priority: 0
+    weight: 0
+    ttl: 7200
+    lease: 7200
+    key-lease: 680400
+    TXT: []
+    host: thingsboard-edge.default.service.arpa.
+    addresses: [fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91]
+Done
+---dns proxy---
+Server: [fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91]:53
+ResponseTimeout: 7000 ms
+MaxTxAttempts: 3
+RecursionDesired: yes
+ServiceMode: srv_txt_opt
+Nat64Mode: allow
+Done
+
+═══ SECTION: services ═══
+---enabled init.d---
+S00sysfixtime
+S09morsechipreset
+S10boot
+S10system
+S11sysctl
+S12log
+S12rpcd
+S13openssl
+S17pcm-manager
+S19dnsmasq
+S19dropbear
+S19firewall
+S19wpad
+S20network
+S20usbmode
+S25packet_steering
+S30radius
+S50cron
+S50uhttpd
+S60dbus
+S60prometheus-node-exporter-lua
+S61avahi-daemon
+S79luci_statistics
+S80collectd
+S80relayd
+S80trelay
+S80ucitrack
+S80umdns
+S89otbr-firewall
+S90aws_kvs
+S90camera-onvif-server
+S90mediamtx
+S90mesh11sd
+S90openvpn
+S90otbr-agent
+S90prplmesh
+S94gpio_switch
+S95done
+S96led
+S98sysntpd
+S99dockerd
+S99morse-boot-prints
+S99openwisp_config
+S99ser2net
+S99ttyd
+S99urandom_seed
+
+---running processes (tb edge / mqtt / docker / mediamtx / hostapd / otbr) ---
+1180 {hostapd} {hostapd} /sbin/ujail -t 5 -n hostapd -U network -G network -C /etc/capabilities/wpad.json -c -- /usr/sbi
+1181 {wpa_supplicant} {wpa_supplicant} /sbin/ujail -t 5 -n wpa_supplicant -U network -G network -C /etc/capabilities/wpad.json 
+1204 /usr/sbin/wpa_supplicant /usr/sbin/wpa_supplicant -n -s -g /var/run/wpa_supplicant/global
+1205 /usr/sbin/hostapd /usr/sbin/hostapd -s -g /var/run/hostapd/global
+1534 /usr/sbin/uhttpd /usr/sbin/uhttpd -f -h /www -r ekh01-de87 -x /cgi-bin -u /ubus -t 300 -T 30 -k 20 -A 1 -n 3 -N 100 -R -p
+1801 avahi-daemon: avahi-daemon: running [ekh01-de87.local]
+2713 mediamtx mediamtx /var/run/mediamtx-cfg01e19e.json
+2806 /usr/sbin/hostapd_s1g /usr/sbin/hostapd_s1g -t -B -s /var/run/hostapd-phy0-wlan0.conf
+3176 dppd dppd --ctrl-if-path=/var/run/hostapd_s1g/wlan0 --passphrase=jYNJ5MQ8 --http-secrets=/etc/dppd/auth_secret
+3416 /usr/bin/dockerd /usr/bin/dockerd --config-file=/tmp/dockerd/daemon.json
+3733 containerd containerd --config /var/run/docker/containerd/containerd.toml --log-level warn
+4039 /usr/bin/docker-proxy /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 5432 -container-ip 172.17.0.2 -container-p
+4095 /usr/bin/containerd-shim-runc-v2 /usr/bin/containerd-shim-runc-v2 -namespace moby -id ab8fb6f528c0dce32f5dbadaa8f9a6f26dfe0463f8f814b5dcc2
+4096 /usr/bin/containerd-shim-runc-v2 /usr/bin/containerd-shim-runc-v2 -namespace moby -id 2d6000de25ce5c066ec0e752201a867f3acce0dd544213e8042c
+4098 /usr/bin/containerd-shim-runc-v2 /usr/bin/containerd-shim-runc-v2 -namespace moby -id fb2445defa4718b5b201bd9197ee5afcfb392bc81d252fe6e992
+4102 /usr/bin/containerd-shim-runc-v2 /usr/bin/containerd-shim-runc-v2 -namespace moby -id 8ca6ff05aa1b1f1673787e71de9c9f2aab085a1f34333e7c9152
+4177 {start-tb-edge.s} {start-tb-edge.s} /bin/bash /usr/bin/start-tb-edge.sh
+5236 /usr/sbin/uhttpd /usr/sbin/uhttpd -f -c /dev/null -l / -L /usr/bin/prometheus-node-exporter-lua -k 70 -p 192.168.1.111:910
+6337 java java -cp /usr/share/tb-edge/bin/tb-edge.jar -Dplatform=deb -Dinstall.data_dir=/usr/share/tb-edge/data -Xl
+7236 postgres: postgres: postgres thingsboard_edge 172.17.0.1(47408) idle
+7242 postgres: postgres: postgres thingsboard_edge 172.17.0.1(47424) idle
+7273 postgres: postgres: postgres thingsboard_edge 172.17.0.1(42152) idle
+7319 postgres: postgres: postgres thingsboard_edge 172.17.0.1(60676) idle
+7792 postgres: postgres: postgres thingsboard_edge 172.17.0.1(58910) idle
+7803 postgres: postgres: postgres thingsboard_edge 172.17.0.1(36696) idle
+7813 postgres: postgres: postgres thingsboard_edge 172.17.0.1(52822) idle
+7925 postgres: postgres: postgres thingsboard_edge 172.17.0.1(54162) idle
+8128 postgres: postgres: postgres thingsboard_edge 172.17.0.1(42596) idle
+8137 postgres: postgres: postgres thingsboard_edge 172.17.0.1(42608) idle
+8177 postgres: postgres: postgres thingsboard_edge 172.17.0.1(37312) idle
+
+---listening ports v4---
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 192.168.1.111:9100      0.0.0.0:*               LISTEN      5236/uhttpd
+tcp        0      0 127.0.0.1:9997          0.0.0.0:*               LISTEN      2713/mediamtx
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN      3176/dppd
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      4039/docker-proxy
+tcp        0      0 192.168.1.111:53        0.0.0.0:*               LISTEN      16062/dnsmasq
+tcp        0      0 0.0.0.0:7681            0.0.0.0:*               LISTEN      3615/ttyd
+tcp        0      0 172.17.0.1:53           0.0.0.0:*               LISTEN      16062/dnsmasq
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      1534/uhttpd
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      1534/uhttpd
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      1076/dropbear
+tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN      16062/dnsmasq
+tcp        0      0 fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 ::1:53                  :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 fe80::42:b3ff:fe30:8d44:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 fd89:e85:a6f0::87a:53   :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 fe80::8aa2:9eff:fe1c:de87:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 :::46085                :::*                    LISTEN      4174/promtail
+tcp        0      0 fdee:f43f:d8b2:1:1df:6a9:934e:99a5:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 :::1883                 :::*                    LISTEN      6337/java
+tcp        0      0 fe80::9c61:83ff:fe0a:d8e3:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 2800:484:8f7e:32f0::87a:53 :::*                    LISTEN      16062/dnsmasq
+tcp        0      0 :::8090                 :::*                    LISTEN      6337/java
+tcp        0      0 fdf5:bffd:bd6:ef74:0:ff:fe00:fc38:53 :::*                    LISTEN      16062/dnsmasq
+---listening ports v6---
+═══ SECTION: docker ═══
+/usr/bin/docker
+CONTAINER ID   IMAGE                             NAMES              STATUS      PORTS
+fb2445defa47   thingsboard/tb-edge:4.3.1.1EDGE   tb-edge-v2         Up 2 days   
+2d6000de25ce   grafana/promtail:3.0.0            promtail           Up 2 days   
+ab8fb6f528c0   prom/prometheus:latest            edge-prom-agent    Up 2 days   
+8ca6ff05aa1b   postgres:15-alpine                tb-edge-postgres   Up 2 days   127.0.0.1:5432->5432/tcp
+---volumes---
+DRIVER    VOLUME NAME
+local     c94d56441f42b60fc8f0aa6193e6b40cf6db7d3ea7e3b5b3d0d04d5752e367be
+---networks---
+NETWORK ID     NAME      DRIVER    SCOPE
+cee224830ef8   bridge    bridge    local
+5dbdd961f57d   host      host      local
+ba091562218b   none      null      local
+---ThingsBoard env (if present)---
+
+═══ SECTION: rc-local ═══
+( sleep 8 && /etc/otbr/reapply-dataset.sh >> /tmp/otbr-reapply.log 2>&1 ) &
+( sleep 15 && \
+  ot-ctl srp client host name thingsboard-edge && \
+  ot-ctl srp client host address fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91 && \
+  ot-ctl srp client service add ThingsBoard-Edge _mqtt._tcp 1883 0 0 && \
+  ot-ctl srp client autostart enable ) >> /tmp/srp-thingsboard.log 2>&1 &
+exit 0
+
+═══ SECTION: uci-defaults-pending ═══
+
+═══ SECTION: dnsmasq-conf ═══
+address=/thingsboard-edge.local/fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91
+address=/thingsboard-edge.local/fdee:f43f:d8b2:1:1df:6a9:934e:99a5
+ptr-record=_mqtt._tcp.local,ThingsBoard-Edge._mqtt._tcp.local
+srv-host=ThingsBoard-Edge._mqtt._tcp.local,thingsboard-edge.local,1883,0,0
+txt-record=ThingsBoard-Edge._mqtt._tcp.local,"version=4.3.1","type=edge"
+address=/thingsboard-edge.default.service.arpa/fdf5:bffd:bd6:ef74:eb7b:f1d1:874e:2b91
+address=/thingsboard-edge.default.service.arpa/fdee:f43f:d8b2:1:1df:6a9:934e:99a5
+ptr-record=_mqtt._tcp.default.service.arpa,ThingsBoard-Edge._mqtt._tcp.default.service.arpa
+srv-host=ThingsBoard-Edge._mqtt._tcp.default.service.arpa,thingsboard-edge.default.service.arpa,1883,0,0
+txt-record=ThingsBoard-Edge._mqtt._tcp.default.service.arpa,"version=4.3.1","type=edge"
+---dnsmasq.d---
+ash: syntax error: unexpected redirection
+═══ avahi services ═══
+thingsboard-mqtt.service
+## /etc/avahi/services/thingsboard-mqtt.service
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">ThingsBoard Edge</name>
+  <service>
+    <type>_mqtt._tcp</type>
+    <port>1883</port>
+    <txt-record>version=4.3.1</txt-record>
+    <txt-record>type=edge</txt-record>
+    <txt-record>cloud=192.168.1.170:7070</txt-record>
+  </service>
+</service-group>
+
+═══ /etc/otbr/ ═══
+drwx------    2 root     root          3488 Apr 20 10:01 .
+drwxr-xr-x    1 root     root          3488 Apr 26 21:53 ..
+-rw-------    1 root     root           214 Apr 20 10:01 active-dataset.tlvs
+-rw-r--r--    1 root     root           320 Apr 20 10:01 active-dataset.txt
+-rwxr-xr-x    1 root     root           379 Apr 20 10:01 reapply-dataset.sh
+## /etc/otbr/active-dataset.tlvs
+0e0800000000000100004a0300000f35060004001fffe002081a2578dd6ee3573b0708fdf5bffd0bd6ef7405105edebead64405b3e17193646c2942285010223ed0410bb7e7aee56236ea96ac8dc65bba183510c0402a0f7f8030b554e414c2d5468726561640003000019
+## /etc/otbr/active-dataset.txt
+Active Timestamp: 1
+Channel: 25
+Wake-up Channel: 15
+Channel Mask: 0x07fff800
+Ext PAN ID: 1a2578dd6ee3573b
+Mesh Local Prefix: fdf5:bffd:bd6:ef74::/64
+Network Key: 5edebead64405b3e17193646c2942285
+Network Name: UNAL-Thread
+PAN ID: 0x23ed
+PSKc: bb7e7aee56236ea96ac8dc65bba18351
+Security Policy: 672 onrc 0
+Done
+
+## /etc/otbr/reapply-dataset.sh
+#!/bin/sh
+TLV=$(cat /etc/otbr/active-dataset.tlvs)
+STATE=$(ot-ctl state 2>/dev/null | head -1)
+if [ "$STATE" = "disabled" ] || [ "$STATE" = "detached" ]; then
+    echo "$(date): reapplying dataset (state=$STATE)"
+    ot-ctl dataset set active $TLV
+    ot-ctl ifconfig up
+    ot-ctl thread start
+else
+    echo "$(date): Thread already running (state=$STATE), no action needed"
+fi
+
+
+═══ /etc/dnsmasq.d/ files ═══
+
+═══ /etc/dropbear/authorized_keys (count) ═══
+1 /etc/dropbear/authorized_keys
+
+═══ /etc/sysupgrade.conf ═══
+## This file contains files and directories that should
+## be preserved during an upgrade.
+
+# /etc/example.conf
+# /etc/openvpn/
+/etc/otbr/
+/etc/rc.local
+/etc/dnsmasq.conf
+/etc/avahi/services/
+
+═══ /etc/modules.d/morse ═══
+# Morse module, with subsequent morse_cli commands: bss_color= forced_listen_interval=
+morse reattach_hw=0 bcf=bcf_mf15457.bin country=US enable_sgi_rc=1 macaddr_suffix=1c:de:87
+
+---loaded params---
+spi_use_edge_irq=N
+spi_clock_speed=50000000
+bcf=bcf_mf15457.bin
+country=US
+
+═══ ThingsBoard tb-edge container env (key vars) ═══
+INTEGRATIONS_RPC_PORT=10090
+CLOUD_RPC_HOST=192.168.1.170
+CONF_FOLDER=/usr/share/tb-edge/conf
+HTTP_BIND_PORT=8090
+MQTT_BIND_ADDRESS=0.0.0.0
+MQTT_BIND_PORT=1883
+SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+LWM2M_SECURITY_BIND_PORT=5684
+CLOUD_RPC_PORT=7070
+CLOUD_ROUTING_KEY=a20260e0f6129d16f080
+CLOUD_ROUTING_SECRET=627aa0162bc2e05c6fd2
+SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/thingsboard_edge
+
+═══ ThingsBoard tb-edge mounts/ports ═══
+image: thingsboard/tb-edge:4.3.1.1EDGE
+ports: 1883/tcp 5683/udp 5685/udp 8080/tcp 
+mappings: 
+mounts:
+  bind /opt/docker/tb-edge-data -> /data
+restart: unless-stopped
+network: host 
+
+═══ all docker containers config summary ═══
+## tb-edge-v2
+image: thingsboard/tb-edge:4.3.1.1EDGE
+ports: 
+restart: unless-stopped
+network: host 
+
+## promtail
+image: grafana/promtail:3.0.0
+ports: 
+restart: unless-stopped
+network: host 
+
+## edge-prom-agent
+image: prom/prometheus:latest
+ports: 
+restart: unless-stopped
+network: host 
+
+## tb-edge-postgres
+image: postgres:15-alpine
+ports: 5432/tcp->127.0.0.1:5432 
+restart: unless-stopped
+network: bridge 
+
+═══ storage ═══
+Filesystem                Size      Used Available Use% Mounted on
+/dev/root               101.3M    101.3M         0 100% /rom
+tmpfs                     1.8G      1.3M      1.8G   0% /tmp
+/dev/loop0               58.1G     13.7G     44.4G  24% /overlay
+overlayfs:/overlay       58.1G     13.7G     44.4G  24% /
+/dev/mmcblk0p1           63.9M     18.7M     45.2M  29% /boot
+tmpfs                   512.0K         0    512.0K   0% /dev
+overlayfs:/overlay       58.1G     13.7G     44.4G  24% /opt/docker
+
+═══ enabled init.d ═══
+S00sysfixtime
+S09morsechipreset
+S10boot
+S10system
+S11sysctl
+S12log
+S12rpcd
+S13openssl
+S17pcm-manager
+S19dnsmasq
+S19dropbear
+S19firewall
+S19wpad
+S20network
+S20usbmode
+S25packet_steering
+S30radius
+S50cron
+S50uhttpd
+S60dbus
+S60prometheus-node-exporter-lua
+S61avahi-daemon
+S79luci_statistics
+S80collectd
+S80relayd
+S80trelay
+S80ucitrack
+S80umdns
+S89otbr-firewall
+S90aws_kvs
+S90camera-onvif-server
+S90mediamtx
+S90mesh11sd
+S90openvpn
+S90otbr-agent
+S90prplmesh
+S94gpio_switch
+S95done
+S96led
+S98sysntpd
+S99dockerd
+S99morse-boot-prints
+S99openwisp_config
+S99ser2net
+S99ttyd
+S99urandom_seed

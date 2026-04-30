@@ -1,0 +1,62 @@
+## R1000 SRP fix snapshot — 2026-04-28 post-mleid-fix
+Tue Apr 28 17:00:07 -05 2026
+
+## verificación crítica: SRP host address debe ser mleid
+--- expected mleid ---
+fdf1:a391:6243:2a67:2478:c089:bf5a:2554
+Done
+
+--- SRP server services published ---
+ThingsBoard-Edge._coap._udp.default.service.arpa.
+    deleted: false
+    subtypes: (null)
+    port: 5683
+    priority: 0
+    weight: 0
+    ttl: 7200
+    lease: 7200
+    key-lease: 680400
+    TXT: []
+    host: thingsboard-edge.default.service.arpa.
+    addresses: [fdf1:a391:6243:2a67:2478:c089:bf5a:2554]
+ThingsBoard-Edge._lwm2m._udp.default.service.arpa.
+    deleted: false
+    subtypes: (null)
+    port: 5683
+    priority: 0
+    weight: 0
+    ttl: 7200
+    lease: 7200
+    key-lease: 680400
+    TXT: []
+    host: thingsboard-edge.default.service.arpa.
+    addresses: [fdf1:a391:6243:2a67:2478:c089:bf5a:2554]
+Done
+
+--- SRP client state ---
+Enabled
+Done
+name:"thingsboard-edge", state:Registered, addrs:[fdf1:a391:6243:2a67:2478:c089:bf5a:2554]
+Done
+instance:"ThingsBoard-Edge", name:"_lwm2m._udp", state:Registered, port:5683, priority:0, weight:0
+instance:"ThingsBoard-Edge", name:"_coap._udp", state:Registered, port:5683, priority:0, weight:0
+Done
+
+## drift check (script para CI/runbook)
+BUG: SRP host publishes add, expected fdf1:a391:6243:2a67:2478:c089:bf5a:2554
+
+## firewall - port 8090 open in WAN?
+		tcp dport 8090 counter packets 0 bytes 0 accept comment "!fw4: Allow-TB-Edge-HTTP-WAN"
+		jump reject_from_wan
+
+## hotplug wpan0_undeprecate installed?
+-rwxr-xr-x    1 root     root          1206 Apr 28 16:29 /etc/hotplug.d/iface/99-wpan0-undeprecate
+
+## sysupgrade.conf
+/etc/config/otbr-agent
+/etc/otbr/active-dataset.tlvs
+/etc/otbr/active-dataset.txt
+/etc/otbr/reapply-dataset.sh
+/etc/rc.local
+/etc/avahi/services/thingsboard-edge.service
+/etc/hotplug.d/iface/99-wpan0-undeprecate

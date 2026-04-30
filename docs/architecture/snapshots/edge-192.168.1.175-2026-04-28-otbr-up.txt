@@ -1,0 +1,221 @@
+## R1000 OTBR snapshot 2026-04-28 (post-migración)
+Tue Apr 28 12:43:48 -05 2026
+
+## identity
+r1000-wm6108-a3dd
+seeed,r1000-wm6108
+5.15.167
+DISTRIB_ID='OpenWrt'
+DISTRIB_RELEASE='23.05.5'
+DISTRIB_REVISION='r24310+1-b077cd4a1a'
+DISTRIB_TARGET='bcm27xx/bcm2711'
+DISTRIB_ARCH='aarch64_cortex-a72'
+DISTRIB_DESCRIPTION='OpenWrt 23.05.5 Morse-2.9-dev'
+DISTRIB_TAINTS='busybox'
+
+## kernel cmdline (sin console=ttyUSB0)
+coherent_pool=1M 8250.nr_uarts=1 snd_bcm2835.enable_compat_alsa=0 snd_bcm2835.enable_hdmi=1 bcm2708_fb.fbwidth=0 bcm2708_fb.fbheight=0 bcm2708_fb.fbswap=1 smsc95xx.macaddr=2C:CF:67:FF:A3:DD vc_mem.mem_base=0x3ec00000 vc_mem.mem_size=0x40000000  console=ttyAMA0 console=tty1 root=/dev/mmcblk0p2 rootfstype=squashfs,ext4 rootwait
+
+## consoles activos
+tty1                 -WU (EC p  )    4:1
+ttyAMA0              -W- (E  p a)  204:64
+ramoops-1            -W- (E  p a)
+
+## net
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+eth0             UP             2c:cf:67:ff:a3:dd <BROADCAST,MULTICAST,UP,LOWER_UP> 
+morse0           DOWN           12:00:00:00:00:00 <BROADCAST,MULTICAST> 
+eth1             DOWN           2c:f7:f1:22:b9:ef <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+phy1-ap0         UP             2e:cf:67:ff:a3:df <BROADCAST,MULTICAST,UP,LOWER_UP> 
+br-lan           UP             2c:f7:f1:22:b9:ef <BROADCAST,MULTICAST,UP,LOWER_UP> 
+wlan0            UP             9c:04:b6:46:09:69 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+docker0          DOWN           02:42:05:b1:8f:fb <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+wpan0            UNKNOWN        <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> 
+lo               UNKNOWN        127.0.0.1/8 
+eth0             UP             192.168.1.175/24 
+br-lan           UP             10.42.0.1/24 
+docker0          DOWN           172.17.0.1/16 
+lo               UNKNOWN        ::1/128 
+eth0             UP             fd89:e85:a6f0:0:2ecf:67ff:feff:a3dd/64 2800:484:8f7e:32f0:2ecf:67ff:feff:a3dd/64 fd89:e85:a6f0::17d/128 2800:484:8f7e:32f0::17d/128 fe80::2ecf:67ff:feff:a3dd/64 
+phy1-ap0         UP             fe80::2ccf:67ff:feff:a3df/64 
+br-lan           UP             fd89:e85:a6f0:c::1/62 2800:484:8f7e:32fc::1/62 fdc3:5381:f776::1/60 fe80::2ef7:f1ff:fe22:b9ef/64 
+wlan0            UP             fe80::9e04:b6ff:fe46:969/64 
+wpan0            UNKNOWN        fdf1:a391:6243:2a67:0:ff:fe00:fc11/64 fd67:9823:5fe5:1:1061:43d9:fa54:b221/64 fdf1:a391:6243:2a67:0:ff:fe00:fc38/64 fdf1:a391:6243:2a67:0:ff:fe00:fc10/64 fdf1:a391:6243:2a67:0:ff:fe00:fc00/64 fdf1:a391:6243:2a67:0:ff:fe00:d800/64 fdf1:a391:6243:2a67:2478:c089:bf5a:2554/64 fe80::1024:efc2:44fb:5938/64 
+
+## thread state
+leader
+Done
+UNAL-R1000
+Done
+0x41ae
+Done
+21
+Done
+552377921
+Done
+d800
+Done
+1224efc244fb5938
+Done
+
+## thread tables
+| ID | RLOC16 | Next Hop | Path Cost | LQ In | LQ Out | Age | Extended MAC     | Link |
++----+--------+----------+-----------+-------+--------+-----+------------------+------+
+| 54 | 0xd800 |       63 |         0 |     0 |      0 |   0 | 1224efc244fb5938 |    0 |
+
+Done
+| ID  | RLOC16 | Timeout    | Age        | LQ In | C_VN |R|D|N|Ver|CSL|QMsgCnt|Suprvsn| Extended MAC     |
++-----+--------+------------+------------+-------+------+-+-+-+---+---+-------+-------+------------------+
+
+Done
+| Role | RLOC16 | Age | Avg RSSI | Last RSSI | LQ In |R|D|N| Extended MAC     | Version |
++------+--------+-----+----------+-----------+-------+-+-+-+------------------+---------+
+
+Done
+
+## border routing
+running
+Done
+Local: fd67:9823:5fe5:1::/64
+Favored: fd67:9823:5fe5:1::/64 prf:low
+Done
+Local: fdb6:8333:bc10:7c53::/64
+Favored: 2800:484:8f7e:32f0::/64
+Done
+
+## thresholds
+12
+Done
+13
+Done
+
+## RCP info
+Bus 001 Device 006: ID 10c4:ea60
+crw-rw----    1 root     dialout   188,   0 Apr 28 12:43 /dev/ttyUSB0
+otbr-agent.service=otbr-agent
+otbr-agent.service.thread_if_name='wpan0'
+otbr-agent.service.infra_if_name='eth0'
+otbr-agent.service.uart_device='/dev/ttyUSB0'
+otbr-agent.service.uart_baudrate='460800'
+otbr-agent.service.uart_flow_control='0'
+otbr-agent.service.auto_attach='1'
+
+## active dataset
+Active Timestamp: 1
+Channel: 21
+Wake-up Channel: 26
+Channel Mask: 0x07fff800
+Ext PAN ID: b68333bc101c7c53
+Mesh Local Prefix: fdf1:a391:6243:2a67::/64
+Network Key: b31c1588a1b2f68c622401711f73afd0
+Network Name: UNAL-R1000
+PAN ID: 0x41ae
+PSKc: 6c9b91f71e5936022a86af24b3c92cd3
+Security Policy: 672 onrc 0
+
+## docker
+Docker version 27.1.1, build 6312585
+REPOSITORY            TAG           IMAGE ID       CREATED       SIZE
+thingsboard/tb-edge   4.3.1.1EDGE   70fa0daa063c   3 weeks ago   1.16GB
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+## persistence
+/etc/config/otbr-agent
+/etc/otbr/active-dataset.tlvs
+/etc/otbr/active-dataset.txt
+/etc/otbr/reapply-dataset.sh
+/etc/rc.local
+
+## rc.local
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+
+# OTBR-RCP-RECOVERY: USB unbind/rebind del dongle si después de boot el spinel falla
+( sleep 5
+  if ! ot-ctl state >/dev/null 2>&1; then
+    echo "$(date): rc.local: spinel not responding, USB-resetting cp210x dongle" >> /tmp/otbr-rcp-recovery.log
+    /etc/init.d/otbr-agent stop
+    sleep 2
+    killall -9 otbr-agent 2>/dev/null
+    sleep 2
+    CP_PATH=$(for d in /sys/bus/usb/devices/*/idVendor; do [ -e "$d" ] && [ "$(cat $d)" = '10c4' ] && basename "${d%/idVendor}"; done)
+    [ -n "$CP_PATH" ] && {
+        echo "$CP_PATH" > /sys/bus/usb/drivers/usb/unbind 2>/dev/null
+        sleep 2
+        echo "$CP_PATH" > /sys/bus/usb/drivers/usb/bind 2>/dev/null
+        sleep 5
+    }
+    /etc/init.d/otbr-agent start
+  fi
+) >> /tmp/otbr-rcp-recovery.log 2>&1 &
+
+# OTBR-REAPPLY: reapply Thread dataset si OT en disabled/detached
+( sleep 18 && /etc/otbr/reapply-dataset.sh >> /tmp/otbr-reapply.log 2>&1 ) &
+
+# OTBR-THRESHOLDS: anticipar backbone selectivo de hasta 12 routers
+( sleep 25 &&   ot-ctl routerupgradethreshold 12 &&   ot-ctl routerdowngradethreshold 13 ) >> /tmp/otbr-router-thresholds.log 2>&1 &
+
+exit 0
+
+## scan PAN (rogue 0xe702 todavía está? channel 21 limpio?)
+| PAN  | MAC Address      | Ch | dBm | LQI |
++------+------------------+----+-----+-----+
+| f1d8 | ce3ab49633555bee | 24 | -63 | 255 |
+| e702 | ca1135258781fbd9 | 25 | -42 | 255 |
+Done
+
+## mac counters baseline
+TxTotal: 1046
+    TxUnicast: 0
+    TxBroadcast: 1046
+    TxAckRequested: 0
+    TxAcked: 0
+    TxNoAckRequested: 1046
+    TxData: 507
+    TxDataPoll: 0
+    TxBeacon: 0
+    TxBeaconRequest: 16
+    TxOther: 0
+    TxRetry: 0
+    TxErrCca: 0
+    TxErrBusyChannel: 0
+    TxErrAbort: 0
+    TxDirectMaxRetryExpiry: 0
+    TxIndirectMaxRetryExpiry: 0
+RxTotal: 4
+    RxUnicast: 2
+    RxBroadcast: 1
+    RxData: 1
+    RxDataPoll: 0
+    RxBeacon: 2
+    RxBeaconRequest: 0
+    RxOther: 0
+    RxAddressFiltered: 0
+    RxDestAddrFiltered: 0
+    RxDuplicated: 0
+    RxErrNoFrame: 0
+    RxErrNoUnknownNeighbor: 1
+    RxErrInvalidSrcAddr: 0
+    RxErrSec: 0
+    RxErrFcs: 0
+    RxErrOther: 0
+Done
+
+## mle counters
+Role Disabled: 1
+Role Detached: 3
+Role Child: 0
+Role Router: 0
+Role Leader: 2
+Attach Attempts: 2
+Partition Id Changes: 2
+Better Partition Attach Attempts: 0
+Better Parent Attach Attempts: 0
+Parent Changes: 0
+Time Disabled Milli: 50261
+Time Detached Milli: 40269
+Time Child Milli: 0
+Time Router Milli: 0
+Time Leader Milli: 316453
+Time Tracked Milli: 406983
+Done

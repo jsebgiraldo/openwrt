@@ -1,0 +1,111 @@
+═══ prometheus container config ═══
+global:
+  scrape_interval: 15s
+  external_labels:
+    cluster: edge
+    node: raspberry-pi
+    location: edge-openwrt
+
+scrape_configs:
+  - job_name: openwrt_system
+    static_configs:
+      - targets: ["192.168.1.111:9100"]
+        labels:
+          device: raspberry-pi
+          os: openwrt
+
+  - job_name: prometheus_agent
+    static_configs:
+      - targets: ["127.0.0.1:9092"]
+
+  - job_name: promtail
+    static_configs:
+      - targets: ["127.0.0.1:9080"]
+
+remote_write:
+  - url: "http://100.67.60.126:9090/api/v1/write"
+    queue_config:
+      max_samples_per_send: 1000
+      batch_send_deadline: 5s
+      min_backoff: 100ms
+      max_backoff: 5s
+    metadata_config:
+      send: true
+      send_interval: 1m
+
+═══ promtail container config ═══
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+- job_name: system
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: varlogs
+      __path__: /var/log/*log
+
+═══ tb-edge-postgres env ═══
+POSTGRES_DB=thingsboard_edge
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+PG_MAJOR=15
+PG_VERSION=15.17
+PG_SHA256=ae14f24c14727e0b2ded1c5553031666099bd1054db3ef44bfa6e2bd6d554a56
+DOCKER_PG_LLVM_DEPS=llvm19-dev 		clang19
+PGDATA=/var/lib/postgresql/data
+
+═══ docker run history (last 4 containers, full args) ═══
+--- tb-edge-v2 full inspect (key fields) ---
+/tb-edge-v2 | image=thingsboard/tb-edge:4.3.1.1EDGE | cmd=[start-tb-edge.sh] | entrypoint=[] | hostnet=host | restart=unless-stopped
+  binds: /opt/docker/tb-edge-data:/data | 
+template parsing error: template: :1: unexpected ":=" in command
+
+--- tb-edge-postgres full inspect (key fields) ---
+/tb-edge-postgres | image=postgres:15-alpine | cmd=[postgres] | entrypoint=[docker-entrypoint.sh] | hostnet=bridge | restart=unless-stopped
+  binds: /opt/docker/tb-edge-data/db:/var/lib/postgresql/data | 
+template parsing error: template: :1: unexpected ":=" in command
+
+--- edge-prom-agent full inspect (key fields) ---
+/edge-prom-agent | image=prom/prometheus:latest | cmd=[--config.file=/etc/prometheus/prometheus.yml --web.listen-address=0.0.0.0:9092 --storage.tsdb.path=/prometheus --storage.tsdb.retention.time=7d] | entrypoint=[/bin/prometheus] | hostnet=host | restart=unless-stopped
+  binds: /opt/docker/prometheus-agent/prometheus-agent.yml:/etc/prometheus/prometheus.yml:ro | 
+template parsing error: template: :1: unexpected ":=" in command
+
+--- promtail full inspect (key fields) ---
+/promtail | image=grafana/promtail:3.0.0 | cmd=[-config.file=/etc/promtail/promtail.yml] | entrypoint=[/usr/bin/promtail] | hostnet=host | restart=unless-stopped
+  binds: /opt/docker/promtail/promtail.yml:/etc/promtail/promtail.yml:ro | /var/log:/var/log:ro | 
+template parsing error: template: :1: unexpected ":=" in command
+
+
+═══ /opt/docker layout ═══
+drwx--x---    1 root     root          3488 Apr 25 09:19 .
+drwxr-xr-x    1 root     root          3488 Feb 16 17:25 ..
+drwx--x--x    4 root     root          3488 Apr 20 09:50 buildkit
+drwx--x--x    3 root     root          3488 Feb 16 17:25 containerd
+drwx--x---    6 root     root          3488 Apr 22 13:56 containers
+-rw-------    1 root     root            36 Apr 20 09:50 engine-id
+drwx------    3 root     root          3488 Apr 20 09:50 image
+drwxr-x---    3 root     root          3488 Apr 20 09:50 network
+drwx------    4 root     root          3488 Apr 20 09:50 plugins
+drwxr-xr-x    2 root     root          3488 Apr 20 10:02 prometheus-agent
+110.0K	/opt/docker/buildkit
+296.0K	/opt/docker/containerd
+463.3M	/opt/docker/containers
+512	/opt/docker/engine-id
+1.3M	/opt/docker/image
+123.0K	/opt/docker/network
+14.0K	/opt/docker/plugins
+4.5K	/opt/docker/prometheus-agent
+8.0K	/opt/docker/promtail
+3.5K	/opt/docker/runtimes
+
+═══ thingsboard tb-edge data dir top-level ═══
+db
