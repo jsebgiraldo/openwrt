@@ -1,0 +1,30 @@
+# Example bench node mapping. Copy to nodes.yaml and edit per-machine.
+# This file is optional — bench_inventory.py auto-detects ESP32-C6 by
+# VID:PID and works without it. Use this when you want stable
+# port-to-endpoint mapping (e.g. for soak runs where physical port = role).
+#
+# nodes.yaml is .gitignored (different per dev machine). Keep this
+# .example file in the repo as documentation.
+
+nodes:
+  - port: /dev/ttyACM0
+    expected_endpoint: ami-esp32c6-f7b4
+    role: bench-1
+    notes: "first bench node — etapa 1 v0.6.0 candidate"
+
+  - port: /dev/ttyACM1
+    expected_endpoint: ami-esp32c6-1494
+    role: bench-2
+    notes: "previous bench node from firmware-agent's setup"
+
+  - port: /dev/ttyACM2
+    expected_endpoint: ami-esp32c6-fbb8
+    role: bench-3
+
+  - port: /dev/ttyACM3
+    expected_endpoint: ami-esp32c6-f6c8
+    role: bench-4
+
+  - port: /dev/ttyACM4
+    expected_endpoint: ami-esp32c6-c60c
+    role: bench-5

@@ -1,0 +1,15 @@
+# Per-machine port mapping (copy from nodes.yaml.example)
+nodes.yaml
+
+# Captured boot logs / soak captures
+logs/
+*.log
+*.pcap
+
+# Python artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# YAML reports
+reports/
