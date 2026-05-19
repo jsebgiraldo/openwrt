@@ -24,7 +24,7 @@
 └──────────────────▲─────────────────────────────┘
                    │ RPC over LAN
 ┌──────────────────┴─────────────────────────────┐
-│  EDGE R1000  192.168.1.175                     │
+│  EDGE R1000  192.168.8.176                     │
 │                                                 │
 │  + OpenWrt 23.05.5 / morse 2.9-dev             │
 │  + OTBR (canal 21, leader)                     │
@@ -42,7 +42,7 @@
 
 | Variable | Valor para este edge | Fuente |
 |---|---|---|
-| `EDGE_LAN_IP` | `192.168.1.175` | DHCP del router central (192.168.1.1) |
+| `EDGE_LAN_IP` | `192.168.8.176` | DHCP del router LAN actual (subnet `192.168.8.0/24`, post-2026-05-06) |
 | `EDGE_HOSTNAME` | `r1000-wm6108-a3dd` | UCI `system.@system[0].hostname` |
 | `THREAD_NETWORK_NAME` | `UNAL-R1000` | dataset CH21 |
 | `THREAD_CHANNEL` | `21` | scan 2026-04-27 confirmó canal limpio |
@@ -50,19 +50,23 @@
 | `THREAD_EXT_PAN_ID` | `b68333bc101c7c53` | random gen |
 | `THREAD_NETWORK_KEY` | `b31c1588a1b2f68c622401711f73afd0` | **SECRET**, random gen |
 | `THREAD_PSKC` | `6c9b91f71e5936022a86af24b3c92cd3` | **SECRET**, random gen |
-| `THREAD_MESH_LOCAL_PREFIX` | `fdf1:a391:6243:2a67::/64` | random gen |
-| `OMR_PREFIX` | `fd67:9823:5fe5:1::/64` | OTBR-assigned |
-| `RCP_DEVICE` | `/dev/ttyUSB0` | Sonoff Zigbee 3.0 Plus V2 (CP210x) |
-| `RCP_BAUDRATE` | `460800` | spinel default para CP210x |
-| `CLOUD_RPC_HOST` | `192.168.1.170` | TB Central server |
-| `CLOUD_RPC_PORT` | `7070` | RPC port TB Central |
-| `CLOUD_ROUTING_KEY` | `14571e5d963b557baedf` | **SECRET**, generado vía script — ver [`zero-touch-provisioning`](../decisions/edge-zero-touch-provisioning.md) |
-| `CLOUD_ROUTING_SECRET` | `0268e4ba25df5e10438d` | **SECRET**, idem |
-| `EDGE_ID_IN_TB` | `b1a230c0-432a-11f1-be42-ff951e684f01` | TB Central UUID, devuelto por `POST /api/edge` |
-| `EDGE_NAME_IN_TB` | `edge-r1000-wm6108` | TB Central |
+| `THREAD_MESH_LOCAL_PREFIX` | `fdf1:a391:6243:2a67::/64` | random gen — preserved across RCP swap |
+| `OMR_PREFIX` | `fd95:786d:5a7f:1::/64` | OTBR-assigned post-Nordic-RCP (was `fd67:9823:5fe5:1::/64` with Sonoff) |
+| `EDGE_OMR_ADDR` | `fd95:786d:5a7f:1:edec:40a5:203:e654` | published in SRP for `_lwm2m._udp` lookup |
+| `EDGE_MLEID_CURRENT` | `fdf1:a391:6243:2a67:838:6daa:c59c:b491` | derived from Nordic RCP extaddr |
+| `EDGE_MLEID_LEGACY_ALIAS` | `fdf1:a391:6243:2a67:2478:c089:bf5a:2554` | TRANSITIONAL alias added to `wpan0` so 25 nodes still on firmware <v0.6.0 (with hardcoded mleid in `CONFIG_AMI_LWM2M_SERVER_IPV6_PRIMARY`) keep reaching TB Edge during the v0.6.0 DNS-SD-only rollout. Re-asserted on every `wpan0 ifup` by `/etc/hotplug.d/iface/99-wpan0-undeprecate`. **Remove** when all 30 nodes are on v0.6.0+. |
+| `RCP_DEVICE` | `/dev/openthread-rcp` (udev symlink) | Nordic nRF52840 Dongle (`1915:cafe`); was Sonoff CP210x with `/dev/ttyUSB0` until 2026-04-30 |
+| `RCP_BAUDRATE` | `1000000` | Nordic ot-rcp default; Sonoff era used `460800` |
+| `CLOUD_RPC_HOST` | `127.0.0.1` (decoupled) | TB Edge runs **standalone** since 2026-05-06; previously `192.168.1.170:7070` |
+| `CLOUD_ROUTING_KEY` | `disabled` | uplink intentionally off — TB Central not currently used |
+| `EDGE_ID_IN_TB` | `b1a230c0-432a-11f1-be42-ff951e684f01` | UUID returned by `POST /api/edge` (preserved from coupled era for re-attach later) |
+| `EDGE_NAME_IN_TB` | `edge-r1000-wm6108` | TB Central registry name |
 | `TB_EDGE_HTTP_PORT` | `8090` | (8080 ocupado por dppd HaLow) |
 
-> **`<TBD>`**: completar después de crear la edge entry en TB Central UI.
+> **Migration log** (do not delete; cited by ADRs):
+> - **2026-04-28**: initial deployment with Sonoff CP210x RCP, OMR `fd67:9823:5fe5:1::/64`, mleid IID ending `bf5a:2554`. LAN subnet `192.168.1.0/24`, edge IP `192.168.1.175`.
+> - **2026-04-30**: Sonoff RCP → Nordic nRF52840 swap (Sonoff went radio-deaf under load — see [`runbooks/thread-mesh-health.md`](../runbooks/thread-mesh-health.md) §3.6). Triggered new OMR prefix and new mleid IID.
+> - **2026-05-06**: LAN subnet migrated `192.168.1.0/24` → `192.168.8.0/24`; edge IP now `192.168.8.176`. TB Central uplink intentionally disabled (`CLOUD_ROUTING_KEY=disabled`) — TB Edge operates standalone for the v0.6.0 firmware soak.
 
 ---
 
@@ -155,7 +159,7 @@ Resultado: chain `input` ahora tiene `iifname "wpan0" jump input_thread` antes d
 ### 4.4 Bridge eth0/eth1 swap
 
 R1000 expone `eth0` (CM4 onboard GbE) y `eth1` (USB-Eth via LAN9512). Configurado:
-- `eth0` → WAN (DHCP, 192.168.1.175)
+- `eth0` → WAN (DHCP, 192.168.8.176)
 - `eth1` → LAN (br-lan, 10.42.0.1/24)
 
 Ver [`02_network`](../../target/linux/bcm27xx/base-files/etc/board.d/02_network) sección `seeed,r1000-wm6108`.
